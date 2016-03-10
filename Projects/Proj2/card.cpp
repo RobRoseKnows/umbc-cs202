@@ -57,83 +57,54 @@ Card::cSuit Card::suit() {
 
 void Card::print() {
 
-	string output = "";
-
 	// Check to make sure the card isn't invalid.
 	if (m_points == 0 || m_suit == Invalid) {
-		output = "Invalid Card";
+		cout << "Invalid Card";
+	} else if (m_points >= 2 && m_points <= 10) {
+		cout << m_points;
 	} else {
 		switch (m_points) {
-		//For some reason, I needed to do this to get the numbered cards working.
-		case 2:
-			output += "2";
-			break;
-		case 3:
-			output += "3";
-			break;
-		case 4:
-			output += "4";
-			break;
-		case 5:
-			output += "5";
-			break;
-		case 6:
-			output += "6";
-			break;
-		case 7:
-			output += "7";
-			break;
-		case 8:
-			output += "8";
-			break;
-		case 9:
-			output += "9";
-			break;
-		case 10:
-			output += "10";
-			break;
 		case 11:
-			output += "Jack";
+			cout << "Jack";
 			break;
 		case 12:
-			output += "Queen";
+			cout << "Queen";
 			break;
 		case 13:
-			output += "King";
+			cout << "King";
 			break;
 		case 14:
-			output += "Ace";
+			cout << "Ace";
 			break;
 		default:
-			output += "Invalid";
-			break;
-
-		}
-
-		output += " of ";
-
-		switch (m_suit) {
-		case (Invalid):
-			output += "Invalid";
-			break;
-		case (Clubs):
-			output += "Clubs";
-			break;
-		case (Diamonds):
-			output += "Diamonds";
-			break;
-		case (Hearts):
-			output += "Hearts";
-			break;
-		case (Spades):
-			output += "Spades";
-			break;
-		default:
-			output += "Default";
+			cout << "Invalid";
 			break;
 		}
 	}
 
-	cout << output << endl;
+	cout << " of ";
+
+	switch (m_suit) {
+	case (Invalid):
+		cout << "Invalid";
+		break;
+	case (Clubs):
+		cout << "Clubs";
+		break;
+	case (Diamonds):
+		cout << "Diamonds";
+		break;
+	case (Hearts):
+		cout << "Hearts";
+		break;
+	case (Spades):
+		cout << "Spades";
+		break;
+	default:
+		cout << "Default";
+		break;
+	}
+
+	cout << endl;
 
 }
