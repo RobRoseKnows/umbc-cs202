@@ -35,7 +35,7 @@ ostream &operator<<(ostream &output, const Time &time) {
 	return output;
 }
 
-Time Time::operator+(const int &minutes) {
+Time Time::operator+(const int &minutes) const {
 	int newHours = m_hours;
 	int newMinutes = m_minutes + minutes;
 
@@ -50,10 +50,10 @@ Time Time::operator+(const int &minutes) {
 		newHours -= 24;
 	}
 
-	return new Time(newHours, newMinutes);
+	return Time(newHours, newMinutes);
 }
 
-bool Time::operator<(const Time &compareTo) {
+bool Time::operator<(const Time &compareTo) const {
 	if (m_hours < compareTo.m_hours) {
 		return true;
 	} else if (m_hours > compareTo.m_hours) {
@@ -65,7 +65,7 @@ bool Time::operator<(const Time &compareTo) {
 	}
 }
 
-bool Time::validTime(const int hours, const int minutes) {
+bool Time::validTime(const int hours, const int minutes) const {
 	// Check to make sure minutes is from 0-59
 	if (minutes >= 0 && minutes < 60) {
 		//Check to see if it's midnight.

@@ -14,16 +14,16 @@ using namespace std;
 
 // Default constructor.  Initialize variables and create dummy node.
 Train::Train() : m_number(0), m_departs( Time() ), m_destination ( "" ),
-		 m_hasSnackCar(false), m_numCoachClass(0), 
-		 m_numBusinessClass(0), m_numSleepingCar(0) {
+		 m_numCoachClass(0), m_numBusinessClass(0),
+		 m_numSleepingCar(0), m_hasSnackCar(false){
   m_head = new TrainCar(); // dummy node
 }
 
 // Non-default constructor.  Initialize variables and create dummy node.
 Train::Train( int num, Time dep, string dest) 
   : m_number(num), m_departs(dep), m_destination(dest),
-    m_hasSnackCar(false), m_numCoachClass(0), 
-    m_numBusinessClass(0), m_numSleepingCar(0) {
+    m_numCoachClass(0), m_numBusinessClass(0),
+    m_numSleepingCar(0), m_hasSnackCar(false){
   m_head = new TrainCar(); // dummy node
 }
 
@@ -179,6 +179,9 @@ void Train::addCar(TrainCar::cType car) {
 		addCar(TrainCar::DiningCar);
 		break;
 	}
+	case TrainCar::NoType: {
+		cout << "Requested to add car without type.";
+	}
 	}
 
 }
@@ -191,6 +194,7 @@ bool Train::removeCar(TrainCar::cType car) {
 			// TODO: If you can't make a train invalid check to make sure that the first is not the final.
 			m_head->m_next = firstLocomotive->m_next;
 			delete firstLocomotive;
+			return true;
 		}
 		break;
 	}
@@ -216,6 +220,7 @@ bool Train::removeCar(TrainCar::cType car) {
 					}
 				}
 			}
+			return true;
 		}
 		break;
 	}
@@ -230,6 +235,7 @@ bool Train::removeCar(TrainCar::cType car) {
 
 			prevCar->m_next = snackCar->m_next;
 			delete snackCar;
+			return true;
 		}
 		break;
 	}
@@ -249,6 +255,7 @@ bool Train::removeCar(TrainCar::cType car) {
 				removeCar(TrainCar::SnackCar);
 				addCar(TrainCar::SnackCar);
 			}
+			return true;
 		}
 		break;
 	}
@@ -271,6 +278,7 @@ bool Train::removeCar(TrainCar::cType car) {
 			while(m_numSleepingCar > 0) {
 				removeCar(TrainCar::SleepingCar);
 			}
+			return true;
 		}
 		break;
 	}
@@ -295,10 +303,16 @@ bool Train::removeCar(TrainCar::cType car) {
 			if(m_numSleepingCar == 0 && isThereADiningCar != NULL) {
 				removeCar(TrainCar::DiningCar);
 			}
+			return true;
 		}
 		break;
 	}
+
+	default: {
+		return false;
 	}
+	}
+	return false;
 }
 
 
@@ -327,7 +341,7 @@ void Train::setDestination(string dest) {
 }
 
 bool Train::isValid() {
-
+	return true;
 }
 
 /// Helper function to find the final car in a train.
@@ -343,7 +357,7 @@ TrainCar* Train::getFinalCar() {
 // Returns NULL if there is no car of given type.
 TrainCar* Train::getFinalCarOfType(TrainCar::cType type){
 	TrainCar* nodeOn = m_head;
-	TrainCar lastOfType = NULL;
+	TrainCar* lastOfType = NULL;
 	while(nodeOn->m_next != NULL) {
 		if(nodeOn->getType() == type) {
 			lastOfType = nodeOn;
@@ -358,7 +372,7 @@ TrainCar* Train::getFinalCarOfType(TrainCar::cType type){
 // Count starts at 1.
 TrainCar* Train::getNthCarOfType(TrainCar::cType type, int n) {
 	TrainCar* nodeOn = m_head;
-	TrainCar nthCar = NULL;
+	TrainCar* nthCar = NULL;
 	// The number of cars of a given type found.
 	int foundSoFar = 0;
 	while(nodeOn->m_next != NULL && nthCar == NULL) {
@@ -380,7 +394,7 @@ TrainCar* Train::getNthCarOfType(TrainCar::cType type, int n) {
 // Returns NULL if no such car exists.
 TrainCar* Train::getFirstCarBeforeType(TrainCar::cType type) {
 	TrainCar* nodeOn = m_head;
-	TrainCar carFound = NULL;
+	TrainCar* carFound = NULL;
 
 	while(nodeOn->m_next != NULL && carFound == NULL) {
 		if(nodeOn->m_next->getType() == type) {
@@ -394,10 +408,10 @@ TrainCar* Train::getFirstCarBeforeType(TrainCar::cType type) {
 }
 
 ostream &operator<<(ostream &output, const Train &train) {
-	TrainCar nodeOn = train.m_head;
-	while(nodeOn.m_next != NULL) {
+	TrainCar* nodeOn = train.m_head;
+	while(nodeOn->m_next != NULL) {
 		output << nodeOn << " ";
-		nodeOn = nodeOn.m_next;
+		nodeOn = nodeOn->m_next;
 	}
 	output << nodeOn << endl;
 	return output;

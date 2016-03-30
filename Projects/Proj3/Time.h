@@ -17,16 +17,16 @@ public:
 	Time();
 	Time(const int hours, const int minutes);
 	// Overloads the addition operator
-	Time operator+(const int& minutes);
+	Time operator+(const int& minutes) const;
 	// Returns true if timeL is before timeR
-	bool operator<(const Time& compareTo);
+	bool operator<(const Time& compareTo) const;
 	friend ostream &operator<<(ostream &outStream, const Time& time);
 
 private:
 	int m_hours;
 	int m_minutes;
 	// Checks to see if the hours and minutes are valid according to ISO-8601.
-	bool validTime(const int hours, const int minutes);
+	bool validTime(const int hours, const int minutes) const;
 };
 
 #endif
