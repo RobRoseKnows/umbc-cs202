@@ -341,6 +341,7 @@ void Train::setDestination(string dest) {
 }
 
 bool Train::isValid() {
+	// TODO: Write this function
 	return true;
 }
 
@@ -410,9 +411,9 @@ TrainCar* Train::getFirstCarBeforeType(TrainCar::cType type) {
 ostream &operator<<(ostream &output, const Train &train) {
 	TrainCar* nodeOn = train.m_head;
 	while(nodeOn->m_next != NULL) {
-		output << nodeOn << " ";
+		output << *nodeOn << " ";
 		nodeOn = nodeOn->m_next;
 	}
-	output << nodeOn << endl;
+	output << *nodeOn << endl;
 	return output;
 }
