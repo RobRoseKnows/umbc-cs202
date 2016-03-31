@@ -1,3 +1,9 @@
+// File: mytest.cpp
+// Author: Robert Rose
+// Date: 3/31/16
+// Section: 03
+// E-mail: robrose2@umbc.edu
+
 #include <iostream>
 #include <string>
 
@@ -23,16 +29,17 @@ int main() {
 
 	cerr << "----- Test TrainCar.cpp -----" << endl;
 	cerr << "Test TrainCar::TrainCar() : Expected: [ NO TYPE ] | Result: ";
-	TrainCar carOne = new TrainCar();
+	TrainCar* carOne = new TrainCar();
 	cerr << carOne << endl;
 	cerr << "Test TrainCar::TrainCar(TrainCar::cType) : Expected: [ -- Snack -- ] | Result: ";
-	TrainCar carTwo = new TrainCar(TrainCar::SnackCar);
+	TrainCar* carTwo = new TrainCar(TrainCar::SnackCar);
 	cerr << carTwo << endl;
 
 	cerr << "----- Test Train.cpp -----" << endl;
 	cerr << "Test Train::Train(int, Time, string) : Expected: NO OUTPUT | Result: ";
-	Train trainOne = new Train(42, Time(16,20), "Canada");
+	Train* trainOne = new Train(42, Time(16,20), "Canada");
 	cerr << "NO OUTPUT" << endl;
+	cerr << "Train Time: " << trainOne->getDepartureTime() << " Train Number: " << trainOne->getNumber() << endl;
 
 
 	// There's no point in writing more test code when this tests everything I have.
