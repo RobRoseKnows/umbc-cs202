@@ -1,10 +1,9 @@
 //
-// Train.h
-// 
-// CMSC 202 Project File
-//
-// YOU MAY *ONLY* ADD PRIVATE HELPER FUNCTIONS
-//
+// File: Train.h
+// Author: Robert Rose
+// Date: 3/30/16
+// Section: 03
+// E-mail: robrose2@umbc.edu
 
 
 #ifndef TRAIN_H

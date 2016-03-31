@@ -50,7 +50,7 @@ ostream& operator<<(ostream &outStream, const TrainCar& car) {
 		outStream << "[ -- Snack -- ]";
 		break;
 	case TrainCar::SleepingCar:
-		outStream << "[ oo Coach oo ]";
+		outStream << "[ o Sleeper o ]";
 		break;
 	case TrainCar::NoType:
 		outStream << "[ NO TYPE ]";

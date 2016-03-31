@@ -30,11 +30,12 @@ Train::Train( int num, Time dep, string dest)
 Train::~Train(){
 	TrainCar* nodeOn = m_head;
 	while(nodeOn != NULL) {
-		TrainCar* next = m_head->m_next;
+		TrainCar* next = nodeOn->m_next;
 		delete nodeOn;
 		nodeOn = next;
 	}
 	m_head = NULL;
+
 }
 
 //
@@ -43,9 +44,6 @@ Train::~Train(){
 //
 
 void Train::addCar(TrainCar::cType car) {
-
-	//TODO: Find out if the coach should be added with the locomotive.
-	//TODO: Find out if the locomotives have to be at the front.
 
 	switch(car) {
 	case TrainCar::Locomotive: {
@@ -64,12 +62,14 @@ void Train::addCar(TrainCar::cType car) {
 	}
 	case TrainCar::BusinessClass: {
 		if(m_numBusinessClass == 0) {
+			// If this is the first BusinessClass car, add it directly behind the Locomotive.
 			TrainCar* lastLocomotive = getFinalCarOfType(TrainCar::Locomotive);
 			TrainCar* newCar = new TrainCar(TrainCar::BusinessClass);
 
 			newCar->m_next = lastLocomotive->m_next;
 			lastLocomotive->m_next = newCar;
 		} else {
+			// If there are already BusinessClass cars.
 			TrainCar* lastBC = getFinalCarOfType(TrainCar::BusinessClass);
 			TrainCar* newCar = new TrainCar(TrainCar::BusinessClass);
 
@@ -133,6 +133,8 @@ void Train::addCar(TrainCar::cType car) {
 		newCar->m_next = prevCar->m_next;
 		prevCar->m_next = newCar;
 
+		m_numCoachClass++;
+
 		// If there's a SnackCar, it will need rebalancing.
 		if(m_hasSnackCar) {
 			removeCar(TrainCar::SnackCar);
@@ -175,12 +177,13 @@ void Train::addCar(TrainCar::cType car) {
 		// Otherwise we'd get stuck in an infinite loop.
 		m_numSleepingCar++;
 		// DiningCar case self-checks to make sure it isn't adding more than one DiningCar.
-		// I decided not to check again here.
+		// I decided not to check again here because the cost of calling a function isn't
+		// going to make a sizeable difference in the performance of the program.
 		addCar(TrainCar::DiningCar);
 		break;
 	}
-	case TrainCar::NoType: {
-		cout << "Requested to add car without type.";
+	default: {
+		cout << "Error in Train::addCar : user tried to add a TrainCar::cType that is not valid." << endl;
 	}
 	}
 
@@ -309,6 +312,7 @@ bool Train::removeCar(TrainCar::cType car) {
 	}
 
 	default: {
+		cout << "Error in Train::removeCar : user tried to remove a TrainCar::cType that is not valid." << endl;
 		return false;
 	}
 	}
@@ -341,8 +345,18 @@ void Train::setDestination(string dest) {
 }
 
 bool Train::isValid() {
-	// TODO: Write this function
-	return true;
+	bool locomotiveAtFront = m_head->getType() == TrainCar::Locomotive;
+	bool coachCarExists = (getFinalCarOfType(TrainCar::CoachClass) != NULL);
+
+	if(!locomotiveAtFront) {
+		cout << "Error in Train::isValid() : Train #" << m_number << " does not have a Locomotive in the front." << endl;
+	}
+
+	if(!coachCarExists) {
+		cout << "Error in Train::isValid() : Train #" << m_number << " does not have any coaches." << endl;
+	}
+
+	return coachCarExists && locomotiveAtFront;
 }
 
 /// Helper function to find the final car in a train.
