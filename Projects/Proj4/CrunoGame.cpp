@@ -16,6 +16,7 @@ using namespace std;
 #include "game.h"
 #include "CrunoDraw2.h"
 #include "Cruno8.h"
+#include "CrunoSkip.h"
 
 // A little helper function to quit the program if
 // memory is not allocated. Here "static" means only
@@ -108,6 +109,10 @@ void CrunoGame::initialize(int numPlayers) {
             // TODO: Add the Skip and Reverse cards here.
 
             m_stock[i] = new CrunoDraw2(s, CrunoDraw2::DrawTwo);
+            ifNullCrash(m_stock[i]);
+            i++;
+
+            m_stock[i] = new CrunoSkip(s, CrunoSkip::Skip);
             ifNullCrash(m_stock[i]);
             i++;
         }
