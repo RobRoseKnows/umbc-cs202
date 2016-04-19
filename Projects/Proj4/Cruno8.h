@@ -32,6 +32,7 @@ public:
 
 
     virtual bool playable(Game *gptr) ;
+
 };
 
 #endif /* CRUNO8_H_ */

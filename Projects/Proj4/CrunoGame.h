@@ -25,7 +25,7 @@ public:
 
     Player* getPlayerPointer(int index);
 
-    static const unsigned int DECK_SIZE = 56;
+    static const unsigned int DECK_SIZE = 60;
 };
 
 #endif /* CRUNOGAME_H_ */

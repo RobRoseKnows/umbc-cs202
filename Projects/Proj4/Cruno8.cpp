@@ -14,14 +14,16 @@
 using namespace std;
 
 Cruno8::Cruno8() {
-    Card::Card();
+    m_points = 8;
+    m_suit = Invalid;
 }
 
 Cruno8::Cruno8(unsigned int s, unsigned int p) {
-    Card::Card(s, p);
+    m_points = 8;
+    m_suit = s;
 }
 
 // Crazy8 is always valid.
 bool Cruno8::playable(Game *gptr) {
-    return true;
+    return gptr->currentSuit() == m_suit;
 }
