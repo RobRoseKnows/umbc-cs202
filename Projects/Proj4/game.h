@@ -171,6 +171,6 @@ protected:
    //
    virtual void gameOver() ;
 
-}
+} ;
 
 #endif

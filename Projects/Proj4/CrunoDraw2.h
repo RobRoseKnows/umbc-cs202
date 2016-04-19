@@ -11,11 +11,12 @@
 #ifndef CRUNODRAW2_H_
 #define CRUNODRAW2_H_
 
-#include <string>
-using namespace std;
+#include "card.h"
+#include "CrunoGame.h"
 
 class Game;
 class Player;
+class Card;
 
 class CrunoDraw2: public Card {
 public:
@@ -31,12 +32,20 @@ public:
     // it does is call Card's constructor.
     CrunoDraw2(unsigned int suit, unsigned int points);
 
-    // Calls
+    // Prints out card.
     virtual string toString();
 
-    virtual void playCard(Game *gptr, Player *pptr);
+    // This allows the card to require a player to
+    // draw two more cards.
+    virtual void showPlayerToCard(Player *pptr) ;
+
+    // Calls the super function and then sets a
+    // variable to store the next player.
+    virtual void playCard(CrunoGame *gptr, Player *pptr);
 private:
-    unsigned int m_nextPlayer;
-}
+    // This stores the index of the lucky player.
+    Player* m_nextPlayerPtr;
+    CrunoGame* m_gamePtr;
+};
 
 #endif /* CRUNODRAW2_H_ */

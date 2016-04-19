@@ -9,7 +9,19 @@
  */
 
 #include "card.h"
-#include "player.h"
-#include "game.h"
 #include "Cruno8.h"
 
+using namespace std;
+
+Cruno8::Cruno8() {
+    Card::Card();
+}
+
+Cruno8::Cruno8(unsigned int s, unsigned int p) {
+    Card::Card(s, p);
+}
+
+// Crazy8 is always valid.
+bool Cruno8::playable(Game *gptr) {
+    return true;
+}
