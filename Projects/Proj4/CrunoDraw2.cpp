@@ -71,35 +71,34 @@ string CrunoDraw2::toString() {
     return oss.str();
 }
 
-void CrunoDraw2::showPlayerToCard(Player *pptr) {
-    // Keep most of the logic in here rather than in playCard. If the
-    // card is the next one according to the saved pointer, deal two
-    // cards to them.
-    if(pptr == m_nextPlayerPtr) {
-        cout << "Player " << m_gamePtr->currentPlayer() + 1 << " Draws 2!";
-
-        // Draw the cards.
-        Card *c1ptr = m_gamePtr->dealOneCard();
-        Card *c2ptr = m_gamePtr->dealOneCard();
-
-        // Give the player their cards.
-        pptr->takeCard(c1ptr);
-        pptr->takeCard(c2ptr);
-
-        // Print out the player's cards.
-        cout << "Player " << m_gamePtr->currentPlayer() + 1 << " draws a card: " << c1ptr->toString() << endl ;
-        cout << "Player " << m_gamePtr->currentPlayer() + 1 << " draws a card: " << c2ptr->toString() << endl ;
-    }
-}
-
 // Might have to change gptr to a CrunoGame.
-void CrunoDraw2::playCard(CrunoGame *gptr, Player *pptr) {
+void CrunoDraw2::playCard(Game *gptr, Player *pptr) {
     Card::playCard(gptr, pptr);
+    CrunoGame *cgptr;
+    cgptr = dynamic_cast<CrunoGame *>(gptr);
 
-    // This records the next player so that the showCardToPlayer()
-    // method can properly determine which lucky player gets two
-    // more cards!
-    unsigned int nextPlayerIndex = gptr->currentPlayer() + 1;
-    m_nextPlayerPtr = gptr->getPlayerPointer(nextPlayerIndex);
-    m_gamePtr = gptr;
+    // Get a pointer for the next player.
+    unsigned int nextPlayerIndex = gptr->playerAfter(gptr->currentPlayer());
+    Player *npptr = cgptr->getPlayerPointer(nextPlayerIndex);
+
+    cout << "Player " << cgptr->playerAfter(cgptr->currentPlayer())
+            << " Draws 2!" << endl;
+
+    // Originally had all this logic in showPlayerToCard but since that is
+    // called before playCard() I moved it to here.
+
+    // Draw the cards.
+    Card *c1ptr = cgptr->dealOneCard();
+    Card *c2ptr = cgptr->dealOneCard();
+
+    // Give the player their cards.
+    npptr->takeCard(c1ptr);
+    npptr->takeCard(c2ptr);
+
+    // Print out the player's cards.
+    cout << "Player " << cgptr->playerAfter(cgptr->currentPlayer())
+            << " draws a card: " << c1ptr->toString() << endl;
+    cout << "Player " << cgptr->playerAfter(cgptr->currentPlayer())
+            << " draws a card: " << c2ptr->toString() << endl;
+
 }

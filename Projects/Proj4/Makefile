@@ -46,4 +46,4 @@ mytest.o: mytest.cpp $(BASECS) $(CRUNCS)
 test: $(BASEOS) $(CRUNOO) $(TESTO)
 	g++ $(LFLAGS) $(BASEOS) $(CRUNOO) $(TESTO) -o test
 
-all: $(BASEOS) $(CRUNOO) $(TESTO)
+all: $(BASEOS) $(CRUNOO) $(TESTO) test

@@ -35,17 +35,9 @@ public:
     // Prints out card.
     virtual string toString();
 
-    // This allows the card to require a player to
-    // draw two more cards.
-    virtual void showPlayerToCard(Player *pptr) ;
-
     // Calls the super function and then sets a
     // variable to store the next player.
-    virtual void playCard(CrunoGame *gptr, Player *pptr);
-private:
-    // This stores the index of the lucky player.
-    Player* m_nextPlayerPtr;
-    CrunoGame* m_gamePtr;
+    virtual void playCard(Game *gptr, Player *pptr);
 };
 
 #endif /* CRUNODRAW2_H_ */

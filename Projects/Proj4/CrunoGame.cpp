@@ -8,9 +8,14 @@
  * 
  */
 
+// Macro to make an int index in the player array
+// into a positive number because C++ mod is weird.
+#define POSITIVE(i) ((i) < 0 ? 0 - (i) : (i))
+
 #include "CrunoGame.h"
 #include <stdlib.h>
 #include <iostream>
+
 using namespace std;
 
 #include "game.h"
@@ -32,6 +37,8 @@ static void ifNullCrash(void *ptr) {
 
 CrunoGame::CrunoGame() {
     Game::Game();
+    m_skipPlayerNumber = -1;
+    m_directionConstant = 1;
 }
 
 Player* CrunoGame::getPlayerPointer(int index) {
@@ -69,12 +76,12 @@ void CrunoGame::initialize(int numPlayers) {
 
     // usually use just one deck
     int decks = 1;
-    m_maxCards = DECK_SIZE;   // 52 cards in one deck
+    m_maxCards = DECK_SIZE;
 
     if (numPlayers > 5) {
         // use two decks
         decks = 2;
-        m_maxCards = 2 * DECK_SIZE; // 104 cards in two decks
+        m_maxCards = 2 * DECK_SIZE;
     }
 
     // allocate space for the discard pile
@@ -124,4 +131,50 @@ void CrunoGame::initialize(int numPlayers) {
     // Still haven't started (need to have players added)
     m_started = false;
     m_over = false;
+}
+
+unsigned int CrunoGame::currentPlayer() {
+    return m_currentPlayer;
+}
+
+// use % m_numPlayers to wrap around. Use macros to correct the
+// signage.
+unsigned int CrunoGame::nextPlayer() {
+    unsigned int nextPlayer = POSITIVE(
+            (m_currentPlayer + m_directionConstant) % m_numPlayers);
+
+    // If player is supposed to be skipped, take the player after nextPlayer.
+    if (nextPlayer == m_skipPlayerNumber) {
+        nextPlayer = POSITIVE((nextPlayer + m_directionConstant) % m_numPlayers);
+    }
+
+    // Since we have skipped the player, we now make sure he isn't
+    // skipped again.
+    m_skipPlayerNumber = -1;
+
+    // Set and return the current player
+    m_currentPlayer = nextPlayer;
+    return m_currentPlayer;
+}
+
+// This uses macros and mod to get the player that comes after
+// the current player. Skips the player if they are supposed
+// to be skipped.
+unsigned int CrunoGame::playerAfter(unsigned int thisPlayer) {
+    unsigned int nextPlayer = POSITIVE(
+            (thisPlayer + m_directionConstant) % m_numPlayers);
+    if (nextPlayer == m_skipPlayerNumber) {
+        return POSITIVE((nextPlayer + m_directionConstant) % m_numPlayers);
+    } else {
+        return nextPlayer;
+    }
+}
+
+void CrunoGame::reversePlay() {
+    m_directionConstant = -m_directionConstant;
+}
+
+void CrunoGame::skipPlayer(int player) {
+    cout << "Player " << player << " is skipped!" << endl;
+    m_skipPlayerNumber = player;
 }

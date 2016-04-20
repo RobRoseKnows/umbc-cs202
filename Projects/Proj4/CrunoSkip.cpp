@@ -70,24 +70,15 @@ string CrunoSkip::toString() {
     return oss.str();
 }
 
-void CrunoSkip::showPlayerToCard(Player *pptr) {
-    if(pptr == m_nextPlayerPtr) {
-        cerr << "Player " << m_gamePtr->currentPlayer() + 1 << " is skipped";
-
-        // Skip the player
-        m_gamePtr->nextPlayer();
-    }
-}
 
 // Might have to change gptr to a CrunoGame.
-void CrunoSkip::playCard(CrunoGame *gptr, Player *pptr) {
+void CrunoSkip::playCard(Game *gptr, Player *pptr) {
     Card::playCard(gptr, pptr);
+    CrunoGame *cgptr;
+    cgptr = dynamic_cast<CrunoGame *>(gptr);
 
-    // This records the next player so that showCardToPlayer() can
-    // determine who gets skipped.
-    unsigned int nextPlayerIndex = gptr->currentPlayer() + 1;
-    m_nextPlayerPtr = gptr->getPlayerPointer(nextPlayerIndex);
-    m_gamePtr = gptr;
+    Card::playCard(gptr, pptr);
+    cgptr->skipPlayer(gptr->playerAfter(gptr->currentPlayer()));
 }
 
 

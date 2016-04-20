@@ -25,5 +25,5 @@ Cruno8::Cruno8(unsigned int s, unsigned int p) {
 
 // Crazy8 is always valid.
 bool Cruno8::playable(Game *gptr) {
-    return gptr->currentSuit() == m_suit;
+    return true;
 }
