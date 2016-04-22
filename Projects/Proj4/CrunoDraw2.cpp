@@ -5,7 +5,9 @@
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * This is the Draw 2 implementation for a game of Cruno. The card can
+ * be played on any card of the same suit or on another Draw 2 card. The
+ * logic for making a player draw 2 is in playCard.
  */
 
 #include "CrunoDraw2.h"

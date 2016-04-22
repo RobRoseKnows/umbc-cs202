@@ -20,8 +20,9 @@ class Game;
 class CrunoGame : public Game {
 public:
     // Constant representing the size of the deck. This is so
-    // I can easily add new cards in debugging.
-    static const unsigned int DECK_SIZE = 60;
+    // I can easily add new cards in debugging. I kept it in
+    // because it reduces the number of magic numbers.
+    static const unsigned int DECK_SIZE = 76;
 
     CrunoGame();
 
@@ -32,15 +33,17 @@ public:
     // Gets the pointer of a player of a given index.
     Player* getPlayerPointer(int index);
 
-    virtual unsigned int currentPlayer() ;
-
     virtual unsigned int nextPlayer() ;
 
     virtual unsigned int playerAfter(unsigned int thisPlayer) ;
 
+    virtual Card * dealOneCard();
+
     void reversePlay();
 
     void skipPlayer(int player);
+
+    void shuffleCards();
 
 private:
     // Player number to skip. -1 if no skip needed.

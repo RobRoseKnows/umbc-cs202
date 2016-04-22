@@ -1,37 +1,32 @@
 /*
- * File:    CrunoSkip.cpp
+ * File:    CrunoReverse.cpp
  * Author:  Robert
  * Section: 3
- * Created: Apr 18, 2016
+ * Created: Apr 21, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * This is the Skip action card for the Cruno game. A large part of
- * the code is copied from the CrunoDraw2.cpp
+ * 
  */
 
-#include "CrunoSkip.h"
-#include<iostream>
-#include<string>
+#include "CrunoReverse.h"
 #include<sstream>
+
+#include "card.h"
+#include "CrunoGame.h"
 
 using namespace std;
 
-#include "card.h"
-#include "player.h"
-#include "CrunoGame.h"
-
-CrunoSkip::CrunoSkip() {
-    m_points = Skip;
+CrunoReverse::CrunoReverse() {
+    m_points = Reverse;
     m_suit = Invalid;
 }
 
-CrunoSkip::CrunoSkip(unsigned int s, unsigned int p) {
+CrunoReverse::CrunoReverse(unsigned int s, unsigned int p) {
     m_points = p;
     m_suit = s;
 }
 
-// Copied from CrunoDraw2.cpp
-string CrunoSkip::toString() {
+string CrunoReverse::toString() {
     ostringstream oss;
 
     switch (m_points) {
@@ -70,21 +65,15 @@ string CrunoSkip::toString() {
     return oss.str();
 }
 
-
-// Might have to change gptr to a CrunoGame.
-void CrunoSkip::playCard(Game *gptr, Player *pptr) {
+void CrunoReverse::playCard(Game *gptr, Player *pptr) {
     Card::playCard(gptr, pptr);
     CrunoGame *cgptr;
     cgptr = dynamic_cast<CrunoGame *>(gptr);
 
-    // Calls super class to actually play the card.
-    Card::playCard(gptr, pptr);
-
-    // This tells the game to skip a certain player number. I chose not
-    // to have this actually skip the player because it is better form to
-    // do it in such a way that playerAfter() returns the proper next player
-    // and so that nextPlayer() won't be called twice.
-    cgptr->skipPlayer(gptr->playerAfter(gptr->currentPlayer()));
+    cgptr->reversePlay();
 }
 
-
+bool CrunoReverse::playable(Game *gptr) {
+    return (m_suit == gptr->currentSuit())
+            || (m_points == gptr->currentPoints());
+}

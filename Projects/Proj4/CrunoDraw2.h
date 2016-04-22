@@ -25,18 +25,17 @@ public:
     static const unsigned int DrawTwo = 17;
 
     // A default constructor for the Draw Two
-    // card. All it does is call Card's constructor.
+    // card.
     CrunoDraw2();
 
-    // A constructor for the Draw Two card. All
-    // it does is call Card's constructor.
+    // A constructor for the Draw Two card.
     CrunoDraw2(unsigned int suit, unsigned int points);
 
     // Prints out card.
     virtual string toString();
 
-    // Calls the super function and then sets a
-    // variable to store the next player.
+    // Calls the super function and then triggers
+    // the next player to draw two cards.
     virtual void playCard(Game *gptr, Player *pptr);
 };
 

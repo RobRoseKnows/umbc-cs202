@@ -5,7 +5,8 @@
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * This is the CrunoGame class that adds neccessary logic and methods to
+ * the Game class so that it can play a game of Cruno.
  */
 
 // Macro to make an int index in the player array
@@ -22,11 +23,11 @@ using namespace std;
 #include "CrunoDraw2.h"
 #include "Cruno8.h"
 #include "CrunoSkip.h"
+#include "CrunoReverse.h"
 
-// A little helper function to quit the program if
-// memory is not allocated. Here "static" means only
-// code in this file can see this function.
-//
+/**
+ * Helper function from superclass.
+ */
 static void ifNullCrash(void *ptr) {
     if (ptr == NULL) {
         cerr << "Could not allocate memory\n";
@@ -113,15 +114,20 @@ void CrunoGame::initialize(int numPlayers) {
                 i++;
             }
 
-            // TODO: Add the Skip and Reverse cards here.
+            // Add two sets of cards each.
+            for (int faceIndex = 0; faceIndex < 2; faceIndex++) {
+                m_stock[i] = new CrunoDraw2(s, CrunoDraw2::DrawTwo);
+                ifNullCrash(m_stock[i]);
+                i++;
 
-            m_stock[i] = new CrunoDraw2(s, CrunoDraw2::DrawTwo);
-            ifNullCrash(m_stock[i]);
-            i++;
+                m_stock[i] = new CrunoSkip(s, CrunoSkip::Skip);
+                ifNullCrash(m_stock[i]);
+                i++;
 
-            m_stock[i] = new CrunoSkip(s, CrunoSkip::Skip);
-            ifNullCrash(m_stock[i]);
-            i++;
+                m_stock[i] = new CrunoReverse(s, CrunoReverse::Reverse);
+                ifNullCrash(m_stock[i]);
+                i++;
+            }
         }
     }
 
@@ -133,10 +139,6 @@ void CrunoGame::initialize(int numPlayers) {
     m_over = false;
 }
 
-unsigned int CrunoGame::currentPlayer() {
-    return m_currentPlayer;
-}
-
 // use % m_numPlayers to wrap around. Use macros to correct the
 // signage.
 unsigned int CrunoGame::nextPlayer() {
@@ -145,12 +147,12 @@ unsigned int CrunoGame::nextPlayer() {
 
     // If player is supposed to be skipped, take the player after nextPlayer.
     if (nextPlayer == m_skipPlayerNumber) {
-        nextPlayer = POSITIVE((nextPlayer + m_directionConstant) % m_numPlayers);
+        nextPlayer = POSITIVE(
+                (nextPlayer + m_directionConstant) % m_numPlayers);
+        // Since we have skipped the player, we now make sure he isn't
+        // skipped again.
+        m_skipPlayerNumber = -1;
     }
-
-    // Since we have skipped the player, we now make sure he isn't
-    // skipped again.
-    m_skipPlayerNumber = -1;
 
     // Set and return the current player
     m_currentPlayer = nextPlayer;
@@ -161,19 +163,83 @@ unsigned int CrunoGame::nextPlayer() {
 // the current player. Skips the player if they are supposed
 // to be skipped.
 unsigned int CrunoGame::playerAfter(unsigned int thisPlayer) {
+    // The positive macro here makes the next index positive.
     unsigned int nextPlayer = POSITIVE(
             (thisPlayer + m_directionConstant) % m_numPlayers);
     if (nextPlayer == m_skipPlayerNumber) {
+        // The POSITIVE macro here makes the next index positive.
         return POSITIVE((nextPlayer + m_directionConstant) % m_numPlayers);
     } else {
         return nextPlayer;
     }
 }
 
+Card *CrunoGame::dealOneCard() {
+   Card *cptr ;
+
+   // Check to see if the stock is empty. If so, shuffle the discard into
+   // stock.
+   if (m_numStock < 1) {
+       if(m_numDiscard < 1) {
+           // Sanity check.
+           m_over = true;
+           return NULL;
+       }
+       shuffleCards();
+   }
+
+   // Gimme!
+   //
+   m_numStock-- ;
+   cptr = m_stock[m_numStock] ;
+   m_stock[m_numStock] = NULL ;
+
+   return cptr ;
+}
+
+void CrunoGame::shuffleCards() {
+    bool shuffled = false;
+
+    // This puts all the discard cards into the stock so we can shuffle them.
+    while(m_numDiscard > 0) {
+        // Set the next stock card from the last discarded card.
+        m_stock[m_numStock] = m_discard[m_numDiscard - 1];
+
+        // This is to make sure that m_discard is empty.
+        m_discard[m_numDiscard - 1] = NULL;
+        m_numDiscard--;
+        m_numStock++;
+    }
+
+    int j;
+
+    // This was taken from startGame to shuffle the deck.
+    for(unsigned int i = 0 ; i < m_numStock ; i++) {
+       Card *temp ;
+
+       j = rand() % m_numStock ;
+       temp = m_stock[i] ;
+       m_stock[i] = m_stock[j] ;
+       m_stock[j] = temp ;
+    }
+}
+
+/**
+ * This reverses the direction of play by negating the direction
+ * constant.
+ */
 void CrunoGame::reversePlay() {
+
+    cout << "Play is reversed!" << endl;
     m_directionConstant = -m_directionConstant;
 }
 
+/**
+ * I chose to implement skipPlayer here rather than in CrunoSkip.cpp
+ * because it was simpler and it would allow the nextPlayer() and
+ * playerAfter() to properly display whether or not a player would be
+ * skipped. It also means that nextPlayer() won't be called too many times.
+ */
 void CrunoGame::skipPlayer(int player) {
     cout << "Player " << player << " is skipped!" << endl;
     m_skipPlayerNumber = player;
