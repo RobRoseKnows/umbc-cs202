@@ -1,6 +1,6 @@
 /*
  * File:    CrunoSkip.cpp
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 18, 2016
  * E-mail:  robrose2@umbc.edu
@@ -21,7 +21,7 @@ using namespace std;
 #include "CrunoGame.h"
 
 CrunoSkip::CrunoSkip() {
-    m_points = Skip;
+    m_points = CrunoGame::Skip;
     m_suit = Invalid;
 }
 
@@ -35,13 +35,13 @@ string CrunoSkip::toString() {
     ostringstream oss;
 
     switch (m_points) {
-        case Skip:
+        case CrunoGame::Skip:
             oss << "Skip";
             break;
-        case Reverse:
+        case CrunoGame::Reverse:
             oss << "Reverse";
             break;
-        case DrawTwo:
+        case CrunoGame::DrawTwo:
             oss << "Draw Two";
             break;
         default:
@@ -71,7 +71,9 @@ string CrunoSkip::toString() {
 }
 
 
-// Might have to change gptr to a CrunoGame.
+/**
+ * Overrode playCard() to tell the game to skip a certain player.
+ */
 void CrunoSkip::playCard(Game *gptr, Player *pptr) {
     Card::playCard(gptr, pptr);
     CrunoGame *cgptr;

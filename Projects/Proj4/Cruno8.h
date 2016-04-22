@@ -1,11 +1,11 @@
 /*
  * File:    Cruno8.h
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * The Crazy 8's wild card header for the game of Cruno.
  */
 
 #ifndef CRUNO8_H_
@@ -20,16 +20,12 @@ class Card;
 class Cruno8 : public Card {
 public:
 
-    // These aren't necessary for this one, but I wanted
-    // to include them to unify the cards.
-    static const unsigned int Skip = 15;
-    static const unsigned int Reverse = 16;
-    static const unsigned int DrawTwo = 17;
-
     // The two constructors.
     Cruno8();
     Cruno8(unsigned int suit, unsigned int points);
 
+
+    virtual void playCard(Game *gptr, Player *pptr);
 
     virtual bool playable(Game *gptr) ;
 

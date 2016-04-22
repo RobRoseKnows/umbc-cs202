@@ -1,6 +1,6 @@
 /*
  * File:    CrunoDraw2.cpp
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
@@ -22,7 +22,7 @@ using namespace std;
 #include "CrunoGame.h"
 
 CrunoDraw2::CrunoDraw2() {
-    m_points = DrawTwo;
+    m_points = CrunoGame::DrawTwo;
     m_suit = Invalid;
 }
 
@@ -37,14 +37,14 @@ string CrunoDraw2::toString() {
     switch (m_points) {
         // I included all three Uno cards here so I could
         // just copy and paste this code into the other
-        // classes.
-        case Skip:
+        // classses.
+        case CrunoGame::Skip:
             oss << "Skip";
             break;
-        case Reverse:
+        case CrunoGame::Reverse:
             oss << "Reverse";
             break;
-        case DrawTwo:
+        case CrunoGame::DrawTwo:
             oss << "Draw Two";
             break;
         default:

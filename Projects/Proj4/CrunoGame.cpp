@@ -1,6 +1,6 @@
 /*
  * File:    CrunoGame.cpp
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
@@ -37,15 +37,24 @@ static void ifNullCrash(void *ptr) {
 }
 
 CrunoGame::CrunoGame() {
+    // Call super constructor to do most of the work.
     Game::Game();
     m_skipPlayerNumber = -1;
     m_directionConstant = 1;
 }
 
+/**
+ * This method is used by CrunoDraw2 to get the pointer of a player by
+ * their index in the player array.
+ */
 Player* CrunoGame::getPlayerPointer(int index) {
     return Game::m_players[index];
 }
 
+/**
+ * Overrode initialize method to add the action cards to the deck and to
+ * add Cruno8 cards as well.
+ */
 void CrunoGame::initialize(int numPlayers) {
     m_suit = 0;
     m_points = 0;
@@ -116,15 +125,15 @@ void CrunoGame::initialize(int numPlayers) {
 
             // Add two sets of cards each.
             for (int faceIndex = 0; faceIndex < 2; faceIndex++) {
-                m_stock[i] = new CrunoDraw2(s, CrunoDraw2::DrawTwo);
+                m_stock[i] = new CrunoDraw2(s, DrawTwo);
                 ifNullCrash(m_stock[i]);
                 i++;
 
-                m_stock[i] = new CrunoSkip(s, CrunoSkip::Skip);
+                m_stock[i] = new CrunoSkip(s, Skip);
                 ifNullCrash(m_stock[i]);
                 i++;
 
-                m_stock[i] = new CrunoReverse(s, CrunoReverse::Reverse);
+                m_stock[i] = new CrunoReverse(s, Reverse);
                 ifNullCrash(m_stock[i]);
                 i++;
             }
@@ -139,8 +148,10 @@ void CrunoGame::initialize(int numPlayers) {
     m_over = false;
 }
 
-// use % m_numPlayers to wrap around. Use macros to correct the
-// signage.
+/**
+ * use % m_numPlayers to wrap around. Use macros to correct the
+ * signage. Properly skips players as well.
+ */
 unsigned int CrunoGame::nextPlayer() {
     unsigned int nextPlayer = POSITIVE(
             (m_currentPlayer + m_directionConstant) % m_numPlayers);
@@ -159,9 +170,11 @@ unsigned int CrunoGame::nextPlayer() {
     return m_currentPlayer;
 }
 
-// This uses macros and mod to get the player that comes after
-// the current player. Skips the player if they are supposed
-// to be skipped.
+/**
+ * This uses macros and mod to get the player that comes after
+ * the current player. Skips the player if they are supposed
+ * to be skipped. Works with the direction constant as well.
+ */
 unsigned int CrunoGame::playerAfter(unsigned int thisPlayer) {
     // The positive macro here makes the next index positive.
     unsigned int nextPlayer = POSITIVE(
@@ -181,7 +194,7 @@ Card *CrunoGame::dealOneCard() {
    // stock.
    if (m_numStock < 1) {
        if(m_numDiscard < 1) {
-           // Sanity check.
+           // Sanity check
            m_over = true;
            return NULL;
        }
@@ -197,6 +210,10 @@ Card *CrunoGame::dealOneCard() {
    return cptr ;
 }
 
+/**
+ * This method shuffles all the cards in the discard pile into the stock
+ * in order to keep the game going.
+ */
 void CrunoGame::shuffleCards() {
     bool shuffled = false;
 

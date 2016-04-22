@@ -5,7 +5,7 @@
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * This is my tester for the Cruno Project.
  */
 
 
@@ -16,6 +16,7 @@ using namespace std ;
 #include "game.h"
 #include "player.h"
 #include "CrunoGame.h"
+#include "CrunoPlayer.h"
 
 int main() {
 
@@ -29,10 +30,10 @@ int main() {
    // players in the same game.
    //
    int n = G.getNumCards() ;
-   Player *pptr1 = new Player(&G,n) ;
-   Player *pptr2 = new Player(&G,n) ;
-   Player *pptr3 = new Player(&G,n) ;
-   Player *pptr4 = new Player(&G,n) ;
+   CrunoPlayer *pptr1 = new CrunoPlayer(&G,n) ;
+   CrunoPlayer *pptr2 = new CrunoPlayer(&G,n) ;
+   CrunoPlayer *pptr3 = new CrunoPlayer(&G,n) ;
+   CrunoPlayer *pptr4 = new CrunoPlayer(&G,n) ;
 
    G.addPlayer(pptr1) ;
    G.addPlayer(pptr2) ;

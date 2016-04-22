@@ -1,11 +1,11 @@
 /*
  * File:    CrunoReverse.h
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 21, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * The header file for the CrunoReverse card.
  */
 
 #ifndef CRUNOREVERSE_H_
@@ -15,9 +15,6 @@
 
 class CrunoReverse: public Card {
 public:
-    static const unsigned int Skip = 15;
-    static const unsigned int Reverse = 16;
-    static const unsigned int DrawTwo = 17;
 
     CrunoReverse();
 

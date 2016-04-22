@@ -1,11 +1,11 @@
 /*
  * File:    CrunoGame.h
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * The header file for CrunoGame.
  */
 
 #ifndef CRUNOGAME_H_
@@ -24,6 +24,14 @@ public:
     // because it reduces the number of magic numbers.
     static const unsigned int DECK_SIZE = 76;
 
+    // I decided to put these here so that all the card objects
+    // could reference to one static set of variables. It made
+    // more sense to me than having all of them call one of the
+    // other cards since they already include CrunoGame.
+    static const unsigned int Skip = 15;
+    static const unsigned int Reverse = 16;
+    static const unsigned int DrawTwo = 17;
+
     CrunoGame();
 
     // Modified initialize method that properly initializes a
@@ -39,10 +47,13 @@ public:
 
     virtual Card * dealOneCard();
 
+    // Called by CrunoReverse to reverse play
     void reversePlay();
 
+    // Called by CrunoSkip to skip a certain player.
     void skipPlayer(int player);
 
+    // Shuffles the discard into the stock.
     void shuffleCards();
 
 private:

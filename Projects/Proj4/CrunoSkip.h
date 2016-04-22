@@ -1,11 +1,11 @@
 /*
  * File:    CrunoSkip.h
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 18, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * The header file for CrunoSkip.
  */
 
 #ifndef CRUNOSKIP_H_
@@ -20,10 +20,6 @@ class Card;
 
 class CrunoSkip: public Card {
 public:
-    static const unsigned int Skip = 15;
-    static const unsigned int Reverse = 16;
-    static const unsigned int DrawTwo = 17;
-
     // A default constructor for the Draw Two
     // card. All it does is call Card's constructor.
     CrunoSkip();
@@ -38,10 +34,6 @@ public:
     // Calls the super function and then sets a
     // variable to store the next player.
     virtual void playCard(Game *gptr, Player *pptr);
-private:
-    // This stores the index of the lucky player.
-    Player* m_nextPlayerPtr;
-    CrunoGame* m_gamePtr;
 };
 
 #endif /* CRUNOSKIP_H_ */

@@ -1,11 +1,11 @@
 /*
  * File:    CrunoDraw2.h
- * Author:  Robert
+ * Author:  Robert Rose
  * Section: 3
  * Created: Apr 14, 2016
  * E-mail:  robrose2@umbc.edu
  * Description:
- * 
+ * The CrunoDraw2 header file.
  */
 
 #ifndef CRUNODRAW2_H_
@@ -20,9 +20,6 @@ class Card;
 
 class CrunoDraw2: public Card {
 public:
-    static const unsigned int Skip = 15;
-    static const unsigned int Reverse = 16;
-    static const unsigned int DrawTwo = 17;
 
     // A default constructor for the Draw Two
     // card.

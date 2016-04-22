@@ -17,7 +17,7 @@
 using namespace std;
 
 CrunoReverse::CrunoReverse() {
-    m_points = Reverse;
+    m_points = CrunoGame::Reverse;
     m_suit = Invalid;
 }
 
@@ -26,17 +26,18 @@ CrunoReverse::CrunoReverse(unsigned int s, unsigned int p) {
     m_suit = s;
 }
 
+// Copied from CrunoDraw2.cpp
 string CrunoReverse::toString() {
     ostringstream oss;
 
     switch (m_points) {
-        case Skip:
+        case CrunoGame::Skip:
             oss << "Skip";
             break;
-        case Reverse:
+        case CrunoGame::Reverse:
             oss << "Reverse";
             break;
-        case DrawTwo:
+        case CrunoGame::DrawTwo:
             oss << "Draw Two";
             break;
         default:
@@ -67,6 +68,8 @@ string CrunoReverse::toString() {
 
 void CrunoReverse::playCard(Game *gptr, Player *pptr) {
     Card::playCard(gptr, pptr);
+
+    // Dynamic casting!
     CrunoGame *cgptr;
     cgptr = dynamic_cast<CrunoGame *>(gptr);
 
