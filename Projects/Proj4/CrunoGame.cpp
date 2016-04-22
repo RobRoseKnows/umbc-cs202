@@ -11,8 +11,6 @@
 
 // Macro to make an int index in the player array
 // into a positive number because C++ mod is weird.
-#define POSITIVE(i) ((i) < 0 ? 0 - (i) : (i))
-
 #include "CrunoGame.h"
 #include <stdlib.h>
 #include <iostream>
@@ -149,17 +147,14 @@ void CrunoGame::initialize(int numPlayers) {
 }
 
 /**
- * use % m_numPlayers to wrap around. Use macros to correct the
- * signage. Properly skips players as well.
+ * use % m_numPlayers to wrap around. Properly skips players as well.
  */
 unsigned int CrunoGame::nextPlayer() {
-    unsigned int nextPlayer = POSITIVE(
-            (m_currentPlayer + m_directionConstant) % m_numPlayers);
+    int nextPlayer = (m_currentPlayer + m_directionConstant) % m_numPlayers;
 
     // If player is supposed to be skipped, take the player after nextPlayer.
     if (nextPlayer == m_skipPlayerNumber) {
-        nextPlayer = POSITIVE(
-                (nextPlayer + m_directionConstant) % m_numPlayers);
+        nextPlayer = (nextPlayer + m_directionConstant) % m_numPlayers;
         // Since we have skipped the player, we now make sure he isn't
         // skipped again.
         m_skipPlayerNumber = -1;
@@ -172,19 +167,14 @@ unsigned int CrunoGame::nextPlayer() {
 
 /**
  * This uses macros and mod to get the player that comes after
- * the current player. Skips the player if they are supposed
- * to be skipped. Works with the direction constant as well.
+ * the current player. Does NOT take into consideration if the player
+ * should be skipped. This is so it can be used to showCards to Players
+ * in playGame().
  */
 unsigned int CrunoGame::playerAfter(unsigned int thisPlayer) {
     // The positive macro here makes the next index positive.
-    unsigned int nextPlayer = POSITIVE(
-            (thisPlayer + m_directionConstant) % m_numPlayers);
-    if (nextPlayer == m_skipPlayerNumber) {
-        // The POSITIVE macro here makes the next index positive.
-        return POSITIVE((nextPlayer + m_directionConstant) % m_numPlayers);
-    } else {
-        return nextPlayer;
-    }
+    int nextPlayer = (thisPlayer + m_directionConstant) % m_numPlayers;
+    return nextPlayer;
 }
 
 Card *CrunoGame::dealOneCard() {
@@ -194,7 +184,7 @@ Card *CrunoGame::dealOneCard() {
    // stock.
    if (m_numStock < 1) {
        if(m_numDiscard < 1) {
-           // Sanity check
+           // Sanity check to make sure the players don't already have all the cards.
            m_over = true;
            return NULL;
        }
@@ -216,17 +206,18 @@ Card *CrunoGame::dealOneCard() {
  */
 void CrunoGame::shuffleCards() {
     bool shuffled = false;
+    cout << "Discard is shuffled into the deck!" << endl;
 
-    // This puts all the discard cards into the stock so we can shuffle them.
-    while(m_numDiscard > 0) {
-        // Set the next stock card from the last discarded card.
-        m_stock[m_numStock] = m_discard[m_numDiscard - 1];
+    // Holds the last card that we keep in the discard array.
+    Card* lastPlayed = m_discard[m_numDiscard - 1];
 
-        // This is to make sure that m_discard is empty.
-        m_discard[m_numDiscard - 1] = NULL;
-        m_numDiscard--;
-        m_numStock++;
+    for(unsigned int i = 0; i < m_numDiscard - 1; i++) {
+        m_stock[i] = m_discard[i];
     }
+
+    m_numStock = m_numDiscard - 1;
+    m_numDiscard = 1;
+    m_discard[0] = lastPlayed;
 
     int j;
 
