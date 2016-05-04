@@ -47,7 +47,7 @@ public:
 
     // Return the address of the storage array;
     // for use in grading programs
-    int* getStorageArray();
+    int* getStorageArray() const;
 
     // Insert an item in sorted; return iterator to inserted item
     const_iterator insert(int data);
@@ -59,12 +59,21 @@ public:
     // Get element at indx position
     const int& at(int indx);
 
-    // Starting iterator value for const_iterator
+    // Returns an iterator pointing to the first item in the array.
     const_iterator begin();
 
-    // Ending iterator value for const_iterator; typically,
-    // one element beyond the last valid element in the array.
+    // Returns an iterator pointing to the first item in the array.
+    // This is the constant version so I can use it in copy constructor.
+    const_iterator beginConst() const;
+
+    // Returns an iterator poiting to the end of the array, one
+    // past the last item.
     const_iterator end();
+
+    // Returns an iterator poiting to the end of the array, one
+    // past the last item.
+    // This is the constant version so I can use it in copy constructor.
+    const_iterator endConst() const;
 
     // Starting iterator value for rand_iterator.  Should use constant
     // value or time(NULL) as seed value for srand().

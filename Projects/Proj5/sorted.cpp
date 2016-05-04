@@ -14,10 +14,16 @@
 
 using namespace std;
 
+/*
+ * Default constructor for sorted. Copied from the my_array class.
+ */
 sorted::sorted() {
     m_size = 0;
 }
 
+/*
+ * Constructor that takes data and the length of the array.
+ */
 sorted::sorted(int* data, int len) {
     if (len > MAX_SIZE)
         throw range_error("sorted(int* data, int len) len exceeds MAX_SIZE");
@@ -32,12 +38,46 @@ sorted::sorted(int* data, int len) {
 }
 
 sorted::sorted(const sorted& srtd) {
+    // THis isn't really neccessary but I included it anyway for consistency.
+    if (srtd.m_size > MAX_SIZE)
+        throw range_error("sorted(const sorted& srtd) srtd.m_size exceeds MAX_SIZE");
+
+    m_size = srtd.m_size;
+
+    // I wasn't able to use begin() and end() for this because they aren't const so I
+    // made a const version of them. I could have used the overloaded ='s operator but
+    // I figured that it would just be redundant and could introduce another point of
+    // failure since I used the same method in the equality operator.
+    const_iterator oldArrItr = srtd.beginConst();
+    const_iterator newArrItr = beginConst();
+    while (oldArrItr != srtd.endConst()) {
+        *newArrItr = *oldArrItr;
+        oldArrItr++;
+        newArrItr++;
+    }
+
 
 }
 
 sorted::~sorted() {
 
 }
+
+sorted sorted::operator=(const sorted& srtd) {
+    if (m_size != srtd.m_size)
+        throw exception("sorted operator=(const sorted& srtd) sizes of m_size and srtd.m_size are incompatible");
+
+    const_iterator oldArrItr = srtd.beginConst();
+    const_iterator newArrItr = beginConst();
+    while (oldArrItr != srtd.endConst()) {
+        *newArrItr = *oldArrItr;
+        oldArrItr++;
+        newArrItr++;
+    }
+
+    return this;
+}
+
 
 // Returns the MAX_SIZE of the array.
 int sorted::capacity() const {
@@ -50,7 +90,7 @@ int sorted::size() const {
 }
 
 // Returns the storage array for debugging and testing purposes.
-int* sorted::getStorageArray() {
+int* sorted::getStorageArray() const {
     return m_data;
 }
 
@@ -59,14 +99,18 @@ const int& sorted::at(int indx) {
     return m_data[indx];
 }
 
-// Insert an item in sorted; return iterator to inserted item
+/*
+ * Inserts a new item into the array in sorted order.
+ * Takes:   data to insert into the array
+ * Returns: a const_iterator pointing to the item in the array.
+ */
 sorted::const_iterator sorted::insert(int data) {
     // Make sure we aren't going out of range.
     if(m_size + 1 > MAX_SIZE)
         throw range_error("insert(int data) new length exceeds MAX_SIZE");
 
+    // Add data to end and then save the index so we can track it.
     m_data[m_size] = data;
-    cout << "Added " << m_data[m_size] << endl;
     int indexToTrack = m_size;
     m_size++;
 
@@ -75,50 +119,30 @@ sorted::const_iterator sorted::insert(int data) {
     // variables to be more self-documenting.
     indexToTrack = bubble_sort(indexToTrack);
 
-//    cout << "Print m_data:";
-//    for(int i = 0; i < m_size; i++)
-//        cout << " " << m_data[i];
-//    cout << endl;
-
     return const_iterator(&m_data[indexToTrack]);
-
-// TODO: Remove this if bubble sort alone works fine.
-//    int index = 0;
-//
-//    // Go through the array until we reach a point that is greater
-//    while(index < m_size && m_data[index + 1] < data) {
-//        index++;
-//    }
-//
-//    int* stop = &m_data[index];
-//    int* onPtr = &m_data[m_size];
-//
-//    while (onPtr != stop) {
-//        // Set the current one equal to the next
-//        *onPtr = *(onPtr - 1);
-//        onPtr--;
-//    }
-
 
 }
 
-// This sorts the array using bubble sort. Since the array should usually
-// be mostly sorted, bubble sort is actually rather efficient.
-// Takes: the index of a value to track. Usually the one we recently added.
-// Returns: the index that the tracked value ended up at. Technically it
-//          will change indexToTrack inplace, but I prefer to return values
-//          because it makes it more clear what code does.
+/* This sorts the array using bubble sort. Since the array should usually
+ * be mostly sorted, bubble sort is actually rather efficient.
+ * Takes:   the index of a value to track. Usually the one we recently added.
+ * Returns: the index that the tracked value ended up at. Technically it
+ *          will change indexToTrack inplace, but I prefer to return values
+ *          because it makes it more clear what code does.
+ */
 int sorted::bubble_sort(int indexToTrack) {
     bool done = false;
     int on = 0;
     int tmp;
 
+    // Sort until we know it's gone.
     while (not done) {
         // Assume it's sorted
         done = true;
         on++;
         for (int i = 0; i < m_size - on; i++) {
             if (m_data[i] > m_data[i + 1]) {
+                // Do the sorting shuffle
                 tmp = m_data[i];
                 m_data[i] = m_data[i + 1];
                 m_data[i + 1] = tmp;
@@ -156,18 +180,33 @@ sorted::const_iterator sorted::erase(sorted::const_iterator itr) {
     return itr;
 }
 
-// Starting iterator value for const_iterator
+// Returns an iterator pointing to the first item in the array.
 sorted::const_iterator sorted::begin() {
     return const_iterator(&m_data[0]);
 }
 
-// Ending iterator value for const_iterator; typically,
-// one element beyond the last valid element in the array.
+// Returns an iterator pointing to the first item in the array.
+// This is the constant version so I can use it in copy constructor.
+sorted::const_iterator sorted::beginConst() const {
+    return const_iterator(&m_data[0]);
+}
+
+// Returns an iterator poiting to the end of the array, one
+// past the last item.
 sorted::const_iterator sorted::end() {
     return const_iterator(&m_data[m_size]);
 }
 
-/* const_iterator */
+// Returns an iterator poiting to the end of the array, one
+// past the last item.
+// This is the constant version so I can use it in the copy constructor.
+sorted::const_iterator sorted::endConst() const {
+    return const_iterator(&m_data[m_size]);
+}
+
+/*****************************************************************************
+ ************************ const_iterator BEGINS HERE  ************************
+ *****************************************************************************/
 
 sorted::const_iterator::const_iterator() :
         m_current(NULL) { /* Empty constructor */ }

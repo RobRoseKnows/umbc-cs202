@@ -23,7 +23,6 @@ int main() {
         x.insert((i * i) % 23);
 
     // sorted stores items in ascending order
-    cout << "Begin: " << &x.begin() << " End: " << &x.end() << endl;
     cout << "Items in x: ";
     for (itr = x.begin(); itr != x.end(); itr++)
         cout << *itr << " ";
