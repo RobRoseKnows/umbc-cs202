@@ -9,6 +9,7 @@
  */
 
 #include "sorted.h"
+#include "iterator_ex.h"
 
 #include<stdlib.h>
 #include<stdexcept>
@@ -95,7 +96,7 @@ sorted sorted::operator=(const sorted& srtd) {
 
     m_version++;
 
-    return this;
+    return *this;
 }
 
 // Returns the MAX_SIZE of the array.
@@ -110,7 +111,7 @@ int sorted::size() const {
 
 // Returns the storage array for debugging and testing purposes.
 int* sorted::getStorageArray() const {
-    return m_data;
+    return *m_data;
 }
 
 // Returns the value at an index.
@@ -325,8 +326,8 @@ sorted::rand_iterator::rand_iterator(const rand_iterator& itr) {
     m_seed = itr.m_seed;
     m_sorted = itr.m_sorted;
 
-    // Randomly fills in m_rand.
-    randomize (seed);
+    for(int i = 0; i < itr.m_sorted->m_size; i++)
+        m_rand[i] = itr.m_rand[i];
 
     m_current = &m_sorted->m_data[m_rand[0]];
 }
@@ -375,7 +376,7 @@ sorted::rand_iterator sorted::rand_iterator::operator++(int) {
         throw iterator_ex(
                 "sorted::rand_iterator::operator++(int) underlying array has changed");
 
-    rand_iterator result(m_seed);
+    rand_iterator result(m_sorted, m_seed);
     ++(*this);
     return result;
 }
@@ -428,6 +429,12 @@ sorted::rand_iterator sorted::rand_iterator::operator=(
     m_version_created = itr.m_version_created;
     m_seed = itr.m_seed;
     m_sorted = itr.m_sorted;
-    m_rand = itr.m_rand;
+
+    // Copy them one by one instead of rerandomizing
+    for(int i = 0; i < itr.m_sorted->m_size; i++)
+        m_rand[i] = itr.m_rand[i];
+
     m_current = itr.m_current;
+
+    return *this;
 }

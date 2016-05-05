@@ -16,7 +16,7 @@ int main() {
     sorted x;
 
     sorted::const_iterator itr;
-    //sorted::rand_iterator rnditr;
+    sorted::rand_iterator rnditr;
 
     // insert some values into x
     for (int i = 0; i < 10; i++)
@@ -64,15 +64,15 @@ int main() {
         cout << *itr << " ";
     cout << endl << endl;
 
-//    cout << "Items in x using rand_iterator: ";
-//    for (rnditr = x.rndbegin(); rnditr != x.rndend(); rnditr++)
-//        cout << *rnditr << " ";
-//    cout << endl << endl;
-//
-//    cout << "Items in x using rand_iterator with seed 12345: ";
-//    for (rnditr = x.rndbegin(12345); rnditr != x.rndend(); rnditr++)
-//        cout << *rnditr << " ";
-//    cout << endl << endl;
+    cout << "Items in x using rand_iterator: ";
+    for (rnditr = x.rndbegin(); rnditr != x.rndend(); rnditr++)
+        cout << *rnditr << " ";
+    cout << endl << endl;
+
+    cout << "Items in x using rand_iterator with seed 12345: ";
+    for (rnditr = x.rndbegin(12345); rnditr != x.rndend(); rnditr++)
+        cout << *rnditr << " ";
+    cout << endl << endl;
 
 //    cout << "Create a 'playlist' of Prince songs..." << endl;
 //
