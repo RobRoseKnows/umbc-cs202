@@ -152,10 +152,18 @@ public:
         rand_iterator operator=(const rand_iterator& itr);
     private:
         int* m_current;
+        int m_version_created;  // stores the version of the array that this iterator was created on.
+        int m_rand[MAX_SIZE];   // storing the randomized indexes.
+        int m_seed; // The seed for the random number. Don't really need to store this but w/e.
+        sorted* m_sorted;
+
+        void randomize(int seed);
     };
 
 private:
     int m_size;              // number of items in my_array
+    int m_version;           // Version of the array.
+
     int m_data[MAX_SIZE];    // storage array
 
     int bubble_sort(int indexToTrack);
