@@ -14,6 +14,7 @@
 #include<stdlib.h>
 #include<stdexcept>
 #include<iostream>
+#include<cmath>
 
 using namespace std;
 
@@ -23,14 +24,21 @@ using namespace std;
 sorted::sorted() {
     m_size = 0;
     m_version = 0;
+    m_resized_count = 0;
+    m_data = new int[capacity()];
 }
 
 /*
  * Constructor that takes data and the length of the array.
  */
 sorted::sorted(int* data, int len) {
-    if (len > MAX_SIZE)
-        throw range_error("sorted(int* data, int len) len exceeds MAX_SIZE");
+    m_resized_count = 0;
+
+    // Resize the array
+    while(len > capacity())
+        m_resized_count++;
+
+    m_data = new int[capacity()];
 
     for (int i = 0; i < len; i++)
         m_data[i] = data[i];
@@ -43,48 +51,44 @@ sorted::sorted(int* data, int len) {
 }
 
 sorted::sorted(const sorted& srtd) {
-    // THis isn't really neccessary but I included it anyway for consistency.
-    if (srtd.m_size > MAX_SIZE)
-        throw range_error(
-                "sorted(const sorted& srtd) srtd.m_size exceeds MAX_SIZE");
+    m_resized_count = 0;
+
+    // Resize the array by making the capacity exponent bigger.
+    while(srtd.m_size > capacity())
+        m_resized_count++;
 
     m_size = srtd.m_size;
     // It doesn't really have to copy the other one's version, but I thought it was a good idea.
     m_version = srtd.m_version;
+    m_resized_count = srtd.m_resized_count;
+
+    m_data = new int[capacity()];
 
     // I wasn't able to use begin() and end() for this because they aren't const so I
     // made a const version of them. I could have used the overloaded ='s operator but
     // I figured that it would just be redundant and could introduce another point of
     // failure since I used the same method in the equality operator.
-    const_iterator fromArrItr = srtd.beginConst();
-    const_iterator toArrItr = beginConst();
-    while (fromArrItr != srtd.endConst()) {
-        *toArrItr = *fromArrItr;
-        fromArrItr++;
-        toArrItr++;
+    for(int i = 0; i < srtd.m_size; i++) {
+        m_data[i] = srtd.m_data[i];
     }
 }
 
 sorted::~sorted() {
-
+//    for(int i = 0; i < capacity(); i++) {
+//        delete m_data[i];
+//    }
+    delete [] m_data;
 }
 
 sorted sorted::operator=(const sorted& srtd) {
-    if (srtd.m_size > MAX_SIZE)
-        throw range_error(
-                "sorted operator=(const sorted& srtd) srtd.m_size exceeds MAX_SIZE");
 
-    m_size = srtd.m_size;
-
-    // Had to write my own const methods for the beginning and end.
-    const_iterator fromArrItr = srtd.beginConst();
-    const_iterator toArrItr = beginConst();
-
-    while (fromArrItr != srtd.endConst()) {
-        *toArrItr = *fromArrItr;
-        fromArrItr++;
-        toArrItr++;
-    }
+//    if(m_resized_count != srtd.m_resized_count
+//    m_resized_count = srtd.m_resized_count;
+//    m_size = srtd.m_size;
+//
+//    for(int i = 0; i < srtd.m_size; i++) {
+//        m_data[i] = srtd.m_data[i];
+//    }
 
     // I decided not to use this because that data is irrelevant and it shouldn't
     // cause anything to go wrong but I wanted to include it in the code anyway so
@@ -96,12 +100,12 @@ sorted sorted::operator=(const sorted& srtd) {
 
     m_version++;
 
-    return *this;
+    return sorted(srtd);
 }
 
 // Returns the MAX_SIZE of the array.
 int sorted::capacity() const {
-    return MAX_SIZE;
+    return SIZE_UNIT * pow(2, m_resized_count);
 }
 
 // Returns the current size of the array.
@@ -111,7 +115,7 @@ int sorted::size() const {
 
 // Returns the storage array for debugging and testing purposes.
 int* sorted::getStorageArray() const {
-    return *m_data;
+    return m_data;
 }
 
 // Returns the value at an index.
@@ -126,8 +130,17 @@ const int& sorted::at(int indx) {
  */
 sorted::const_iterator sorted::insert(int data) {
     // Make sure we aren't going out of range.
-    if (m_size + 1 > MAX_SIZE)
-        throw range_error("insert(int data) new length exceeds MAX_SIZE");
+    if (m_size + 1 > capacity()) {
+        m_resized_count++;
+        int *resize = new int[capacity()];
+
+        for(int i = 0; i < m_size; i++)
+            resize[i] = m_data[i];
+
+        delete [] m_data;
+
+        m_data = resize;
+    }
 
     // Add data to end and then save the index so we can track it.
     m_data[m_size] = data;
@@ -189,7 +202,8 @@ int sorted::bubble_sort(int indexToTrack) {
 // Remove an item from sorted; return iterator to next item
 // after the erased item
 sorted::const_iterator sorted::erase(sorted::const_iterator itr) {
-    int* end = &m_data[MAX_SIZE];    // one past the end of data
+
+    int* end = &m_data[capacity()];    // one past the end of data
     int* ptr = itr.m_current;        // element to erase
 
     // to erase element at ptr, shift elements from ptr+1 to
@@ -201,11 +215,35 @@ sorted::const_iterator sorted::erase(sorted::const_iterator itr) {
 
     m_size--;
 
+    // Since we're creating a new array to hold the shortened array, we need to be
+    // able to return the new current pointer.
+    int* newItrLocation = itr.m_current;
+
+    // If the array is small enough, size it down.
+    if (m_size <= SIZE_UNIT * pow(2, m_resized_count - 1)) {
+        m_resized_count--;
+        int *resize = new int[capacity()];
+
+        for(int i = 0; i < m_size - 1; i++) {
+            resize[i] = m_data[i];
+
+            // If we're on the one we are on the original one we removed (now the one
+            // next to it and what we want to return) then we want to store its new
+            // location.
+            if(&m_data[i] == itr.m_current)
+                newItrLocation = &resize[i];
+        }
+
+        delete [] m_data;
+
+        m_data = resize;
+    }
+
     // Increments the version that we're currently on so that rand_iterator
     // can throw an exception if necessary.
     m_version++;
 
-    return itr;
+    return const_iterator(newItrLocation);
 }
 
 // Returns an iterator pointing to the first item in the array.
@@ -213,22 +251,9 @@ sorted::const_iterator sorted::begin() {
     return const_iterator(&m_data[0]);
 }
 
-// Returns an iterator pointing to the first item in the array.
-// This is the constant version so I can use it in copy constructor.
-sorted::const_iterator sorted::beginConst() const {
-    return const_iterator(&m_data[0]);
-}
-
 // Returns an iterator poiting to the end of the array, one
 // past the last item.
 sorted::const_iterator sorted::end() {
-    return const_iterator(&m_data[m_size]);
-}
-
-// Returns an iterator poiting to the end of the array, one
-// past the last item.
-// This is the constant version so I can use it in the copy constructor.
-sorted::const_iterator sorted::endConst() const {
     return const_iterator(&m_data[m_size]);
 }
 
@@ -285,6 +310,12 @@ const int& sorted::const_iterator::operator*() {
     return *m_current;
 }
 
+void sorted::const_iterator::setCurrent(int data) {
+
+}
+
+
+
 /*****************************************************************************
  ************************* rand_iterator BEGINS HERE  ************************
  *****************************************************************************/
@@ -301,6 +332,7 @@ sorted::rand_iterator::rand_iterator(sorted* srtdPtr) {
     // Set a constant seed
     m_seed = 12345;
     m_sorted = srtdPtr;
+    m_rand = new int[m_sorted->capacity()];
 
     randomize(m_seed);
 
@@ -314,6 +346,7 @@ sorted::rand_iterator::rand_iterator(sorted* srtdPtr, unsigned seed) {
     m_version_created = srtdPtr->m_version;
     m_seed = seed;
     m_sorted = srtdPtr;
+    m_rand = new int[m_sorted->capacity()];
 
     randomize(seed);
 
@@ -325,6 +358,7 @@ sorted::rand_iterator::rand_iterator(const rand_iterator& itr) {
     m_version_created = itr.m_version_created;
     m_seed = itr.m_seed;
     m_sorted = itr.m_sorted;
+    m_rand = new int[m_sorted->capacity()];
 
     for(int i = 0; i < itr.m_sorted->m_size; i++)
         m_rand[i] = itr.m_rand[i];
@@ -357,7 +391,7 @@ void sorted::rand_iterator::randomize(int seed) {
 
 // Destructor
 sorted::rand_iterator::~rand_iterator() {
-
+    delete [] m_rand;
 }
 
 // pre-increment
@@ -389,14 +423,14 @@ sorted::rand_iterator sorted::rand_iterator::operator++(int) {
  *          != each other.
  */
 bool sorted::rand_iterator::operator!=(const rand_iterator& itr) {
-    // Check this one for sorted changes.
-    if (m_sorted->m_version != m_version_created)
-        throw iterator_ex(
-                "sorted::rand_iterator::operator!=(rand_iterator&) first array has changed");
-    // Check the other one for sorted changes.
-    if (itr.m_sorted->m_version != itr.m_version_created)
-        throw iterator_ex(
-                "sorted::rand_iterator::operator!=(rand_iterator&) second array has changed");
+//    // Check this one for sorted changes.
+//    if (m_sorted->m_version != m_version_created)
+//        throw iterator_ex(
+//                "sorted::rand_iterator::operator!=(rand_iterator&) first array has changed");
+//    // Check the other one for sorted changes.
+//    if (itr.m_sorted->m_version != itr.m_version_created)
+//        throw iterator_ex(
+//                "sorted::rand_iterator::operator!=(rand_iterator&) second array has changed");
 
     // I did this assuming that the comparison function is only comparing the
     // m_current values and not the whole things. That is how it is used in
@@ -419,22 +453,22 @@ const int& sorted::rand_iterator::operator*() {
 // Overloaded assignment operator
 sorted::rand_iterator sorted::rand_iterator::operator=(
         const rand_iterator& itr) {
-    if (m_sorted->m_version != m_version_created)
-        throw iterator_ex(
-                "sorted::rand_iterator::operator++() calling underlying array has changed");
-    if (itr.m_sorted->m_version != itr.m_version_created)
-        throw iterator_ex(
-                "sorted::rand_iterator::operator=(rand_iterator&) set to underlying array has changed");
+//    if (m_sorted->m_version != m_version_created)
+//        throw iterator_ex(
+//                "sorted::rand_iterator::operator++() calling underlying array has changed");
+//    if (itr.m_sorted->m_version != itr.m_version_created)
+//        throw iterator_ex(
+//                "sorted::rand_iterator::operator=(rand_iterator&) set to underlying array has changed");
+//
+//    m_version_created = itr.m_version_created;
+//    m_seed = itr.m_seed;
+//    m_sorted = itr.m_sorted;
+//
+//    // Copy them one by one instead of rerandomizing
+//    for(int i = 0; i < itr.m_sorted->m_size; i++)
+//        m_rand[i] = itr.m_rand[i];
+//
+//    m_current = itr.m_current;
 
-    m_version_created = itr.m_version_created;
-    m_seed = itr.m_seed;
-    m_sorted = itr.m_sorted;
-
-    // Copy them one by one instead of rerandomizing
-    for(int i = 0; i < itr.m_sorted->m_size; i++)
-        m_rand[i] = itr.m_rand[i];
-
-    m_current = itr.m_current;
-
-    return *this;
+    return rand_iterator(itr);
 }

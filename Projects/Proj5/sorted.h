@@ -18,7 +18,7 @@ public:
 
     // Size of storage array.  Maximum number of objects that can be
     // stored in an array.
-    static const int MAX_SIZE = 15;
+    static const int SIZE_UNIT = 8;
 
     // Forward declare iterator classe(s)
     class const_iterator;
@@ -110,8 +110,10 @@ public:
         bool operator!=(const const_iterator& itr);
 
         // Unary dereference operator
+        // This program would be so much nicer if this didn't have to be const.
         const int& operator*();
 
+        void setCurrent(int data);
     private:
         int* m_current;  // pointer to current entry in array
     };
@@ -153,7 +155,7 @@ public:
     private:
         int* m_current;
         int m_version_created;  // stores the version of the array that this iterator was created on.
-        int m_rand[MAX_SIZE];   // storing the randomized indexes.
+        int *m_rand;   // storing the randomized indexes.
         int m_seed; // The seed for the random number. Don't really need to store this but w/e.
         sorted* m_sorted;
 
@@ -163,8 +165,9 @@ public:
 private:
     int m_size;              // number of items in my_array
     int m_version;           // Version of the array.
+    int m_resized_count;
 
-    int m_data[MAX_SIZE];    // storage array
+    int *m_data;    // storage array
 
     int bubble_sort(int indexToTrack);
 };
